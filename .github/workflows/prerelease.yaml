@@ -1,0 +1,77 @@
+name: 'Pre Release'
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  environment:
+    runs-on: ubuntu-latest
+    outputs:
+      env: ${{ steps.env.outputs.name }}
+
+    steps:
+      - name: 'Detect Repo'
+        id: env
+        run: |
+          if [[ "${{ github.event_name }}" == "push" ]]
+          then
+            echo "name=dev" >> $GITHUB_OUTPUT
+          else 
+            echo "name=test" >> $GITHUB_OUTPUT
+          fi
+
+  tests:
+    runs-on: ubuntu-latest
+    needs:
+      - environment
+
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v3
+
+      - name: 'Vulnerability Check'
+        uses: golang/govulncheck-action@v1
+        with:
+          check-latest: true
+
+      - name: 'Setup Go'
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.14'
+          check-latest: true
+
+      - name: 'Unit Test'
+        working-directory: 'reverse'
+        run: |
+          go test .
+  
+  build:
+    runs-on: ubuntu-latest
+    needs: 
+      - environment
+      - tests
+
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v3
+
+      - name: 'Setup Go'
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.14'
+          check-latest: true
+
+      - name: 'Build App'
+        run: |
+          go build .
+
+      - name: 'Debug'
+        run: |
+          ls -la
+          
+      - name: 'Push Artifact'
+        run: |
+          curl -v --user 'admin:env.nexus_passwoerd' --upload-file ./app https://smee.io/YM3yITlo8W0SJ0k/repository/${{ needs.environment.outputs.env }}/app
