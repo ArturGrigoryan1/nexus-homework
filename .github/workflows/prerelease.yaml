@@ -64,9 +64,9 @@ jobs:
           go-version: '1.14'
           check-latest: true
 
-      - name: 'Build App'
-        run: |
-          go build .
+#      - name: 'Build App'
+#        run: |
+#          go build .
 
       - name: 'Debug'
         run: |
@@ -74,4 +74,4 @@ jobs:
           
       - name: 'Push Artifact'
         run: |
-          curl -v --user 'admin:${{secrets.NEXUS_PASSWORD}}' --upload-file ./app https://b9f3-87-241-150-10.ngrok-free.app/repository/${{ needs.environment.outputs.env }}/app       
+          curl -v --user 'admin:${{secrets.NEXUS_PASSWORD}}' --upload-file ./hello https://b9f3-87-241-150-10.ngrok-free.app/repository/${{ needs.environment.outputs.env }}/app       
