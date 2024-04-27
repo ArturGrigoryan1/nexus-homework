@@ -1,0 +1,30 @@
+name: Upload Artifact.
+
+on: 
+  release: 
+  
+env:
+  VERSION_TAG: ${{ github.event.release.tag_name}}
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout..
+              uses: actions/checkout@v4
+              
+            - name: Build artifact
+              uses: actions/upload-artifact@v4
+              with:
+                name: ${{ env.VERSION_TAG }}
+                path: ./
+                
+            - name: Download artifact
+              uses: actions/download-artifact@v4
+              
+            - name: Send to Nexus/prod repository
+              run : curl --fail -u ${{secrets.NEXUS_LOGIN}}:${{secrets.NEXUS_PASSWORD}} --upload-file ${{env.VERSION_TAG}}  'https://b9f3-87-241-150-10.ngrok-free.app/repository/prod/'
+              
+
+                
