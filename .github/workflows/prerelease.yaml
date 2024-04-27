@@ -44,7 +44,7 @@ jobs:
           check-latest: true
 
       - name: 'Unit Test'
-        working-directory: 'reverse'
+       # working-directory: 'reverse'
         run: |
           go test .
   
