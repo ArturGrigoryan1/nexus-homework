@@ -74,4 +74,4 @@ jobs:
           
       - name: 'Push Artifact'
         run: |
-          curl -v --user 'admin:338d1710-dcf2-4109-8f08-1f4b507e46df' --upload-file ./app https://b9f3-87-241-150-10.ngrok-free.app/repository/${{ needs.environment.outputs.env }}/app       
+          curl -v --user 'admin:${{secrets.NEXUS_PASSWORD}}' --upload-file ./app https://b9f3-87-241-150-10.ngrok-free.app/repository/${{ needs.environment.outputs.env }}/app       
