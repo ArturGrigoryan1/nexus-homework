@@ -1,4 +1,5 @@
 name: 'Deploy dev and test'
 
 on:
-  push:
+  push: 
+    -main
